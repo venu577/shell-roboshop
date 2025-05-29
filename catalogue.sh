@@ -65,6 +65,7 @@ then
     curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
     VALIDATE $? "downloading catalogue zip file"
 
+    rm -rf /app/* &>>$LOG_FILE
     cd /app
     unzip /tmp/catalogue.zip &>>$LOG_FILE
     VALIDATE $? "unzipping catalogue zip file"
