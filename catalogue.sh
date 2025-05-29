@@ -31,9 +31,9 @@ then
     VALIDATE(){
         if [ $1 -eq 0 ]
         then 
-         echo -e "installing $2 is $G success $N" | tee -a $LOG_FILE
+         echo -e "$2 is $G success $N" | tee -a $LOG_FILE
          else 
-         echo -e "installing $2 is $R not success $N" | tee -a $LOG_FILE
+         echo -e "$2 is $R not success $N" | tee -a $LOG_FILE
          exit 1
          fi
         }
@@ -89,8 +89,14 @@ then
     dnf install mongodb-mongosh -y &>>$LOG_FILE
     VALIDATE $? "installing mongodb shell"
 
-   mongosh --host mongodb.newgenrobots.site </app/db/master-data.js &>>$LOG_FILE
-    VALIDATE $? "importing catalogue schema to mongodb"
+   STATUS=$(mongosh --host mongodb.newgenrobots.site --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+if [ $STATUS -lt 0 ]
+then
+    mongosh --host mongodb.newgenrobots.site </app/db/master-data.js &>>$LOG_FILE
+    VALIDATE $? "Loading data into MongoDB"
+else
+    echo -e "Data is already loaded ... $Y SKIPPING $N"
+fi
 
-    echo -e "$G catalogue installation is $Y completed $N" | tee -a $LOG_FILE
+
 
