@@ -79,7 +79,7 @@ then
     dnf install mongodb-mongosh -y &>>$LOG_FILE
     VALIDATE $? "installing mongodb shell"
 
-    mongo --host mongodb.newgenrobots.site </app/schema/catalogue.js &>>$LOG_FILE
+   mongosh --host mongodb.newgenrobots.site </app/db/master-data.js &>>$LOG_FILE
     VALIDATE $? "importing catalogue schema to mongodb"
 
     echo -e "$G catalogue installation is $Y completed $N" | tee -a $LOG_FILE
