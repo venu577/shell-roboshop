@@ -47,7 +47,7 @@ then
         systemctl start mongod &>>$LOG_FILE
         VALIDATE $? "enabling and starting mongodb service"
 
-        sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongo.conf 
+        sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf 
         VALIDATE $? "updating mongodb config file"
 
         systemctl restart mongod &>>$LOG_FILE
