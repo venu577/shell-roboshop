@@ -47,10 +47,10 @@ then
         systemctl start mongod &>>$LOG_FILE
         VALIDATE $? "enabling and starting mongodb service"
 
-        sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongo.conf &>>$LOG_FILE
+        sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongo.conf 
         VALIDATE $? "updating mongodb config file"
 
         systemctl restart mongod &>>$LOG_FILE
         VALIDATE $? "restarting mongodb service"
-        
+
         echo -e "$G mongodb installation is $Y completed $N" | tee -a $LOG_FILE
