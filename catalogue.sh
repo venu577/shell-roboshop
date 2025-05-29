@@ -47,8 +47,17 @@ then
     dnf install nodejs -y &>>$LOG_FILE
     VALIDATE $? "installing nodejs"
 
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-    VALIDATE $? "creating roboshop user"
+
+    id roboshop
+    if [ $? -ne 0 ]
+    then 
+        useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+        VALIDATE $? "creating roboshop user"
+    else
+        echo -e "$Y roboshop user is already created $N" | tee -a $LOG_FILE
+    fi
+    # Check if roboshop user exists, if not create it
+    # If it exists, skip user creation
 
     mkdir -p /app &>>$LOG_FILE
     VALIDATE $? "creating app directory"
