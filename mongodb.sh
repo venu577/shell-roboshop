@@ -16,6 +16,7 @@ SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 # Define the log file path
 # Create the logs folder if it doesn't exist 
+SCRIPT_DIR=$PWD
 
 mkdir -p $LOGS_FOLDER
 echo "script started executing at: $(date)" &>>$LOG_FILE
@@ -39,7 +40,7 @@ then
          fi
         }
 
-        cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
+        cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
         VALIDATE $? "copying mongodb repo"
 
         dnf install mongodb-org -y &>>$LOG_FILE
