@@ -16,6 +16,7 @@ SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 # Define the log file path
 # Create the logs folder if it doesn't exist 
+SCRIPT_DIR=$PWD
 
 mkdir -p $LOGS_FOLDER
 echo "script started executing at: $(date)" &>>$LOG_FILE
@@ -63,7 +64,9 @@ then
     VALIDATE $? "unzipping frontend files"
 
     rm -rf /etc/nginx/nginx.conf &>>$LOG_FILE
-    cp nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
+    VALIDATE $? "removing default nginx config file"
+    
+    cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
     VALIDATE $? "copying custom nginx config file"
 
     systemctl restart nginx &>>$LOG_FILE
