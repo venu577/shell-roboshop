@@ -85,9 +85,9 @@ id roboshop
     dnf install mysql -y &>>$LOG_FILE
     VALIDATE $? "installing mysql clinet"
 
-    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql
-    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/app-user.sql 
-    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/master-data.sql
+    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql
+    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/app-user.sql 
+    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/master-data.sql
     VALIDATE $? "importing mysql schema and data"
 
     END_TIME=$(date +%s)
