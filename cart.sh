@@ -54,7 +54,7 @@ then
     id roboshop
     if [ $? -ne 0 ]
     then 
-        cartadd --system --home /app --shell /sbin/nologin --comment "roboshop system cart" roboshop &>>$LOG_FILE
+        useradd --system --home /app --shell /sbin/nologin --comment "roboshop system cart" roboshop &>>$LOG_FILE
         VALIDATE $? "creating roboshop cart"
     else
         echo -e "$Y roboshop cart is already created $N" | tee -a $LOG_FILE
