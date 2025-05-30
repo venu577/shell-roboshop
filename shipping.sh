@@ -85,10 +85,21 @@ id roboshop
     dnf install mysql -y &>>$LOG_FILE
     VALIDATE $? "installing mysql clinet"
 
-    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql
-    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/app-user.sql 
-    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/master-data.sql
-    VALIDATE $? "importing mysql schema and data"
+    mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD -e 'use cities' &>>$LOG_FILE
+    if [ $? -ne 0 ]
+    then 
+
+      mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql
+      mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/app-user.sql 
+      mysql -h mysql.newgenrobots.site -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/master-data.sql
+      VALIDATE $? "importing mysql schema and data"
+    else
+    echo -e "$Y MySQL schema and data already exists $N" | tee -a $LOG_FILE
+    fi
+    # The above command will check if the cities database exists, if not it will create it and import the schema and data
+    # If it exists, it will skip the import
+    # The above command will import the schema and data into the MySQL database  
+      
 
     END_TIME=$(date +%s)
     TOTAL_TIME=$(( $END_TIME - $START_TIME ))
