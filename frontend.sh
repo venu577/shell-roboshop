@@ -63,7 +63,7 @@ then
     VALIDATE $? "unzipping frontend files"
 
     rm -rf /etc/nginx/nginx.conf &>>$LOG_FILE
-    cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
+    cp nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
     VALIDATE $? "copying custom nginx config file"
 
     systemctl restart nginx &>>$LOG_FILE
