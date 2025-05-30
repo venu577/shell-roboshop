@@ -6,11 +6,10 @@ R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-LOGS_FOLDER="/var/log/shellscript-logs"
+LOGS_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 SCRIPT_DIR=$PWD
-# Extract the script name without the extension
 
 mkdir -p $LOGS_FOLDER
 echo "Script started executing at: $(date)" | tee -a $LOG_FILE
@@ -38,20 +37,22 @@ VALIDATE(){
     fi
 }
 
-cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo &>>$LOG_FILE
-VALIDATE $? "Copying RabbitMQ repo file"
+cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
+VALIDATE $? "Adding rabbitmq repo"
+
+dnf install rabbitmq-server -y &>>$LOG_FILE
+VALIDATE $? "Installing rabbitmq server"
 
 systemctl enable rabbitmq-server &>>$LOG_FILE
-VALIDATE $? "Enabling RabbitMQ service"
+VALIDATE $? "Enabling rabbitmq server"
 
 systemctl start rabbitmq-server &>>$LOG_FILE
-VALIDATE $? "starting RabbitMQ service"
+VALIDATE $? "Starting rabbitmq server"
 
 rabbitmqctl add_user roboshop $RABBITMQ_PASSWD &>>$LOG_FILE
 rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
-VALIDATE $? "Adding RabbitMQ user roboshop"
 
- END_TIME=$(date +%s)
- TOTAL_TIME=$(( $END_TIME - $START_TIME ))
-  echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
 
+echo -e "Script exection completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
