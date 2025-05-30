@@ -1,97 +1,80 @@
 #!/bin/bash
 
 START_TIME=$(date +%s)
-# This script installs MongoDB on a Linux system
-
 USERID=$(id -u)
-# Check if the script is run with root access
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-#colours R is for error G is for success Y is for installation N is for normal text
-
-LOGS_FOLDER="/var/log/shellscript-logs" 
+LOGS_FOLDER="/var/log/shellscript-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
-# Extract the script name without the extension
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
-# Define the log file path
-# Create the logs folder if it doesn't exist
-SCRIPT_DIR=$PWD 
+SCRIPT_DIR=$PWD
 
 mkdir -p $LOGS_FOLDER
-echo "script started executing at: $(date)" &>>$LOG_FILE
+echo "Script started executing at: $(date)" | tee -a $LOG_FILE
 
+# check the user has root priveleges or not
 if [ $USERID -ne 0 ]
-
 then
-    echo -e "$R error: run with root access $N" | tee -a $LOG_FILE
-    exit 1
-    else 
-    echo -e "$G you are running with root access $N" | tee -a $LOG_FILE
-    fi
+    echo -e "$R ERROR:: Please run this script with root access $N" | tee -a $LOG_FILE
+    exit 1 #give other than 0 upto 127
+else
+    echo "You are running with root access" | tee -a $LOG_FILE
+fi
 
-    VALIDATE(){
-        if [ $1 -eq 0 ]
-        then 
-         echo -e "$2 is $G success $N" | tee -a $LOG_FILE
-         else 
-         echo -e "$2 is $R not success $N" | tee -a $LOG_FILE
-         exit 1
-         fi
-        }
-
-    dnf module disable nodejs -y &>>$LOG_FILE
-    VALIDATE $? "disabling nodejs module"
-
-    dnf module enable nodejs:20 -y &>>$LOG_FILE
-    VALIDATE $? "enabling nodejs version 20 module"
-
-    dnf install nodejs -y &>>$LOG_FILE
-    VALIDATE $? "installing nodejs"
-
-
-    id roboshop
-    if [ $? -ne 0 ]
-    then 
-        useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-        VALIDATE $? "creating roboshop user"
+# validate functions takes input as exit status, what command they tried to install
+VALIDATE(){
+    if [ $1 -eq 0 ]
+    then
+        echo -e "$2 is ... $G SUCCESS $N" | tee -a $LOG_FILE
     else
-        echo -e "$Y roboshop user is already created $N" | tee -a $LOG_FILE
+        echo -e "$2 is ... $R FAILURE $N" | tee -a $LOG_FILE
+        exit 1
     fi
-    # Check if roboshop user exists, if not create it
-    # If it exists, skip user creation
+}
 
-    mkdir -p /app &>>$LOG_FILE
-    VALIDATE $? "creating app directory"
+dnf module disable nodejs -y &>>$LOG_FILE
+VALIDATE $? "Disabling default nodejs"
 
-    curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-    VALIDATE $? "downloading user zip file"
+dnf module enable nodejs:20 -y &>>$LOG_FILE
+VALIDATE $? "Enabling nodejs:20"
 
-    rm -rf /app/* &>>$LOG_FILE
-    cd /app
-    unzip /tmp/user.zip &>>$LOG_FILE
-    VALIDATE $? "unzipping user zip file"
+dnf install nodejs -y &>>$LOG_FILE
+VALIDATE $? "Installing nodejs:20"
 
-    npm install &>>$LOG_FILE
-    VALIDATE $? "installing nodejs dependencies"
+id roboshop
+if [ $? -ne 0 ]
+then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating roboshop system user"
+else
+    echo -e "System user roboshop already created ... $Y SKIPPING $N"
+fi
 
-    cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service &>>$LOG_FILE
-    VALIDATE $? "copying user service file"
+mkdir -p /app 
+VALIDATE $? "Creating app directory"
 
-    systemctl daemon-reload &>>$LOG_FILE
-    VALIDATE $? "reloading systemd daemon"
+curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
+VALIDATE $? "Downloading user"
 
-    systemctl enable user &>>$LOG_FILE
-    systemctl start user &>>$LOG_FILE
-    VALIDATE $? "enabling and starting user service"
+rm -rf /app/*
+cd /app 
+unzip /tmp/user.zip &>>$LOG_FILE
+VALIDATE $? "unzipping user"
 
-   
+npm install &>>$LOG_FILE
+VALIDATE $? "Installing Dependencies"
 
-  END_TIME=$(date +%s)
-  TOTAL_TIME=$(( $END_TIME - $START_TIME ))
-     echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
-        
+cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service
+VALIDATE $? "Copying user service"
 
+systemctl daemon-reload &>>$LOG_FILE
+systemctl enable user  &>>$LOG_FILE
+systemctl start user
+VALIDATE $? "Starting user"
 
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
 
+echo -e "Script exection completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
