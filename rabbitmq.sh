@@ -48,3 +48,8 @@ VALIDATE $? "Enabling and starting RabbitMQ service"
 rabbitmqctl add_user roboshop $RABBITMQ_PASSWD &>>$LOG_FILE
 rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
 VALIDATE $? "Adding RabbitMQ user roboshop"
+
+ END_TIME=$(date +%s)
+ TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+  echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
+
