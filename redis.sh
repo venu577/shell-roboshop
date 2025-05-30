@@ -52,13 +52,13 @@ then
     VALIDATE $? "updating redis config file"
     #when doing multiple sed commands, use -e option to specify each command
     
-    systemctl restart redis &>>$LOG_FILE 
+    systemctl start redis &>>$LOG_FILE 
     VALIDATE $? "enabling redis service"
 
     systemctl enable redis &>>$LOG_FILE
     VALIDATE $? "starting redis service"
 
-    systemctl start redis &>>$LOG_FILE 
+    systemctl restart redis &>>$LOG_FILE 
     VALIDATE $? "enabling redis service"
 
 
