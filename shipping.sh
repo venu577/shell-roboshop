@@ -13,7 +13,7 @@ LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
 echo "Script started executing at: $(date)" | tee -a $LOG_FILE
 
-# check the user has root priveleges or not
+# check the USER has root priveleges or not
 if [ $USERID -ne 0 ]
 then
     echo -e "$R ERROR:: Please run this script with root access $N" | tee -a $LOG_FILE
@@ -38,12 +38,12 @@ VALIDATE(){
 dnf install maven -y &>>$LOG_FILE
 VALIDATE $? "Installing Maven"
 
-  id roboshop
-    if [ $? -ne 0 ]
-    then 
+id roboshop
+  if [ $? -ne 0 ]
+  then 
         useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
         VALIDATE $? "creating roboshop user"
-    else
+   else
         echo -e "$Y roboshop user is already created $N" | tee -a $LOG_FILE
     fi
     # Check if roboshop user exists, if not create it
@@ -52,13 +52,13 @@ VALIDATE $? "Installing Maven"
     mkdir -p /app &>>$LOG_FILE
     VALIDATE $? "creating app directory"
 
-    curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-    VALIDATE $? "downloading user zip file"
+    curl -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip &>>$LOG_FILE
+    VALIDATE $? "downloading shpping zip file"
 
     rm -rf /app/* &>>$LOG_FILE
     cd /app
-    unzip /tmp/user.zip &>>$LOG_FILE
-    VALIDATE $? "unzipping user zip file"
+    unzip /tmp/shipping.zip &>>$LOG_FILE
+    VALIDATE $? "unzipping shipping zip file"
 
      
     mvn clean package &>>$LOG_FILE
