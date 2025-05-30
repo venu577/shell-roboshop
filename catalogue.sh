@@ -1,5 +1,8 @@
 #!/bin/bash
 
+START_TIME=$(date +%s)
+# This script installs MongoDB on a Linux system
+
 USERID=$(id -u)
 # Check if the script is run with root access
 R="\e[31m"
@@ -97,6 +100,11 @@ then
 else
     echo -e "Data is already loaded ... $Y SKIPPING $N"
 fi
+
+  END_TIME=$(date +%s)
+        TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+        echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
+        
 
 
 
