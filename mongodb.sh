@@ -32,9 +32,9 @@ then
     VALIDATE(){
         if [ $1 -eq 0 ]
         then 
-         echo -e "installing $2 is $G success $N" | tee -a $LOG_FILE
+         echo -e "$2 is $G success $N" | tee -a $LOG_FILE
          else 
-         echo -e "installing $2 is $R not success $N" | tee -a $LOG_FILE
+         echo -e "$2 is $R not success $N" | tee -a $LOG_FILE
          exit 1
          fi
         }
@@ -60,4 +60,3 @@ then
         END_TIME=$(date +%s)
         TOTAL_TIME=$(( $END_TIME - $START_TIME ))
         echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
-        
