@@ -86,24 +86,25 @@ then
     systemctl start catalogue &>>$LOG_FILE
     VALIDATE $? "enabling and starting catalogue service"
 
-    cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
+    cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
     VALIDATE $? "copying mongodb repo file"
 
     dnf install mongodb-mongosh -y &>>$LOG_FILE
     VALIDATE $? "installing mongodb shell"
 
    STATUS=$(mongosh --host mongodb.newgenrobots.site --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
-if [ $STATUS -lt 0 ]
-then
-    mongosh --host mongodb.newgenrobots.site </app/db/master-data.js &>>$LOG_FILE
-    VALIDATE $? "Loading data into MongoDB"
-else
-    echo -e "Data is already loaded ... $Y SKIPPING $N"
-fi
+   if [ $STATUS -lt 0 ]
+   then
+       mongosh --host mongodb.newgenrobots.site </app/db/master-data.js &>>$LOG_FILE
+       VALIDATE $? "Loading data into MongoDB"
+    else
+       echo -e "Data is already loaded ... $Y SKIPPING $N"
+    fi
 
-  END_TIME=$(date +%s)
-        TOTAL_TIME=$(( $END_TIME - $START_TIME ))
-        echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
+    END_TIME=$(date +%s)
+    TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+
+       echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
         
 
 
