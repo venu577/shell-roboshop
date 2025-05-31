@@ -74,6 +74,5 @@ VALIDATE $? "restarting nginx service"
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( $END_TIME - $START_TIME ))
-
 echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
         
