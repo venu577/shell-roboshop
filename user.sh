@@ -56,7 +56,7 @@ mkdir -p /app
 VALIDATE $? "Creating app directory"
 
 curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-VALIDATE $? "Downloading user"
+VALIDATE $? "Downloading user zipfile"
 
 rm -rf /app/*
 cd /app 
