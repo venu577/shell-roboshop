@@ -1,7 +1,4 @@
 #!/bin/bash
-START_TIME=$(date +%s)
-# This script installs Redis on a Linux system
-
 
 START_TIME=$(date +%s)
 USERID=$(id -u)
