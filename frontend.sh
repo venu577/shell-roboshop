@@ -26,53 +26,54 @@ if [ $USERID -ne 0 ]
 then
     echo -e "$R error: run with root access $N" | tee -a $LOG_FILE
     exit 1
-    else 
+else 
     echo -e "$G you are running with root access $N" | tee -a $LOG_FILE
-    fi
+fi
 
-    VALIDATE(){
-        if [ $1 -eq 0 ]
-        then 
+VALIDATE(){
+    if [ $1 -eq 0 ]
+    then 
          echo -e "installing $2 is $G success $N" | tee -a $LOG_FILE
-         else 
+    else 
          echo -e "installing $2 is $R not success $N" | tee -a $LOG_FILE
          exit 1
-         fi
-        }
+    fi
+}
 
-   dnf module disable nginx -y &>>$LOG_FILE
-   VALIDATE $? "disabling nginx module"
+dnf module disable nginx -y &>>$LOG_FILE
+VALIDATE $? "disabling nginx module"
 
-   dnf module enable nginx:1.24 -y &>>$LOG_FILE
-   VALIDATE $? "enabling nginx version 1.24 module"
+dnf module enable nginx:1.24 -y &>>$LOG_FILE
+VALIDATE $? "enabling nginx version 1.24 module"
 
-   dnf install nginx -y &>>$LOG_FILE
-   VALIDATE $? "installing nginx"
+dnf install nginx -y &>>$LOG_FILE
+VALIDATE $? "installing nginx"
 
-   systemctl enable nginx &>>$LOG_FILE
-   systemctl start nginx  &>>$LOG_FILE
-    VALIDATE $? "enabling and starting nginx service"
+systemctl enable nginx &>>$LOG_FILE
+systemctl start nginx  
+VALIDATE $? "enabling and starting nginx service"
 
-    rm -rf /usr/share/nginx/html/* &>>$LOG_FILE
-    VALIDATE $? "removing default nginx html files"
+rm -rf /usr/share/nginx/html/* &>>$LOG_FILE
+VALIDATE $? "removing default nginx html files"
 
-    curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
-    VALIDATE $? "downloading frontend zip file"
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
+VALIDATE $? "downloading frontend zip file"
 
-    cd /usr/share/nginx/html &>>$LOG_FILE
-    unzip /tmp/frontend.zip &>>$LOG_FILE
-    VALIDATE $? "unzipping frontend files"
+cd /usr/share/nginx/html &>>$LOG_FILE
+unzip /tmp/frontend.zip &>>$LOG_FILE
+VALIDATE $? "unzipping frontend files"
 
-    rm -rf /etc/nginx/nginx.conf &>>$LOG_FILE
-    VALIDATE $? "removing default nginx config file"
+rm -rf /etc/nginx/nginx.conf &>>$LOG_FILE
+VALIDATE $? "removing default nginx config file"
     
-    cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
-    VALIDATE $? "copying custom nginx config file"
+cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
+VALIDATE $? "copying custom nginx config file"
 
-    systemctl restart nginx &>>$LOG_FILE
-    VALIDATE $? "restarting nginx service"
+systemctl restart nginx &>>$LOG_FILE
+VALIDATE $? "restarting nginx service"
 
-    END_TIME=$(date +%s)
-    TOTAL_TIME=$(( $END_TIME - $START_TIME ))
-    echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+
+  echo -e "script execution completed successfully , $Y time taken : $TOTAL_TIME Sec $N"
         
