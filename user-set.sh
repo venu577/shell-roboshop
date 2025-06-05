@@ -4,7 +4,7 @@ set -e # Exit immediately if a command exits with a non-zero status
 failure(){
     echo "failed at: $1 $2"
 }
-trap 'failure "${LINE NO}" "${BASH_COMMAND}"' ERR
+trap 'failure "${BASH_SOURCE[0]}" $LINENO' ERR
 
 START_TIME=$(date +%s)
 USERID=$(id -u)
