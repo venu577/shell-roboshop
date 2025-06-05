@@ -31,7 +31,7 @@ fi
 
 dnf module disable nodejs -y &>>$LOG_FILE
 dnf module enable nodejs:20 -y &>>$LOG_FILE
-dnf install nodejs -y &>>$LOG_FILE
+dnf iiinstall nodejs -y &>>$LOG_FILE
 
 id roboshop
 if [ $? -ne 0 ]
@@ -42,7 +42,7 @@ else
 fi
 
 mkdir -p /app 
-curl -o /tmp/userRRRR.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE 
+curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE 
 rm -rf /app/*
 cd /app 
 unzip /tmp/user.zip &>>$LOG_FILE
@@ -58,3 +58,6 @@ systemctl start user
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( $END_TIME - $START_TIME ))
 echo -e "Script exection completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
+
+#by using trap we can catch the error and print the line number
+#but by using this we don't know the flow of the script
